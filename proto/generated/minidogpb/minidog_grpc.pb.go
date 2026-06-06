@@ -19,103 +19,103 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MinidogService_GetSampleData_FullMethodName = "/minidog.MinidogService/GetSampleData"
+	LogCollector_SendLog_FullMethodName = "/minidog.LogCollector/SendLog"
 )
 
-// MinidogServiceClient is the client API for MinidogService service.
+// LogCollectorClient is the client API for LogCollector service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type MinidogServiceClient interface {
+type LogCollectorClient interface {
 	// unary
-	GetSampleData(ctx context.Context, in *SampleRequest, opts ...grpc.CallOption) (*SameResponse, error)
+	SendLog(ctx context.Context, in *LogEntryRequest, opts ...grpc.CallOption) (*LogEntryResponse, error)
 }
 
-type minidogServiceClient struct {
+type logCollectorClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewMinidogServiceClient(cc grpc.ClientConnInterface) MinidogServiceClient {
-	return &minidogServiceClient{cc}
+func NewLogCollectorClient(cc grpc.ClientConnInterface) LogCollectorClient {
+	return &logCollectorClient{cc}
 }
 
-func (c *minidogServiceClient) GetSampleData(ctx context.Context, in *SampleRequest, opts ...grpc.CallOption) (*SameResponse, error) {
+func (c *logCollectorClient) SendLog(ctx context.Context, in *LogEntryRequest, opts ...grpc.CallOption) (*LogEntryResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SameResponse)
-	err := c.cc.Invoke(ctx, MinidogService_GetSampleData_FullMethodName, in, out, cOpts...)
+	out := new(LogEntryResponse)
+	err := c.cc.Invoke(ctx, LogCollector_SendLog_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// MinidogServiceServer is the server API for MinidogService service.
-// All implementations must embed UnimplementedMinidogServiceServer
+// LogCollectorServer is the server API for LogCollector service.
+// All implementations must embed UnimplementedLogCollectorServer
 // for forward compatibility.
-type MinidogServiceServer interface {
+type LogCollectorServer interface {
 	// unary
-	GetSampleData(context.Context, *SampleRequest) (*SameResponse, error)
-	mustEmbedUnimplementedMinidogServiceServer()
+	SendLog(context.Context, *LogEntryRequest) (*LogEntryResponse, error)
+	mustEmbedUnimplementedLogCollectorServer()
 }
 
-// UnimplementedMinidogServiceServer must be embedded to have
+// UnimplementedLogCollectorServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedMinidogServiceServer struct{}
+type UnimplementedLogCollectorServer struct{}
 
-func (UnimplementedMinidogServiceServer) GetSampleData(context.Context, *SampleRequest) (*SameResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetSampleData not implemented")
+func (UnimplementedLogCollectorServer) SendLog(context.Context, *LogEntryRequest) (*LogEntryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SendLog not implemented")
 }
-func (UnimplementedMinidogServiceServer) mustEmbedUnimplementedMinidogServiceServer() {}
-func (UnimplementedMinidogServiceServer) testEmbeddedByValue()                        {}
+func (UnimplementedLogCollectorServer) mustEmbedUnimplementedLogCollectorServer() {}
+func (UnimplementedLogCollectorServer) testEmbeddedByValue()                      {}
 
-// UnsafeMinidogServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to MinidogServiceServer will
+// UnsafeLogCollectorServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LogCollectorServer will
 // result in compilation errors.
-type UnsafeMinidogServiceServer interface {
-	mustEmbedUnimplementedMinidogServiceServer()
+type UnsafeLogCollectorServer interface {
+	mustEmbedUnimplementedLogCollectorServer()
 }
 
-func RegisterMinidogServiceServer(s grpc.ServiceRegistrar, srv MinidogServiceServer) {
-	// If the following call panics, it indicates UnimplementedMinidogServiceServer was
+func RegisterLogCollectorServer(s grpc.ServiceRegistrar, srv LogCollectorServer) {
+	// If the following call panics, it indicates UnimplementedLogCollectorServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&MinidogService_ServiceDesc, srv)
+	s.RegisterService(&LogCollector_ServiceDesc, srv)
 }
 
-func _MinidogService_GetSampleData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SampleRequest)
+func _LogCollector_SendLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogEntryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MinidogServiceServer).GetSampleData(ctx, in)
+		return srv.(LogCollectorServer).SendLog(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MinidogService_GetSampleData_FullMethodName,
+		FullMethod: LogCollector_SendLog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MinidogServiceServer).GetSampleData(ctx, req.(*SampleRequest))
+		return srv.(LogCollectorServer).SendLog(ctx, req.(*LogEntryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// MinidogService_ServiceDesc is the grpc.ServiceDesc for MinidogService service.
+// LogCollector_ServiceDesc is the grpc.ServiceDesc for LogCollector service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var MinidogService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "minidog.MinidogService",
-	HandlerType: (*MinidogServiceServer)(nil),
+var LogCollector_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "minidog.LogCollector",
+	HandlerType: (*LogCollectorServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetSampleData",
-			Handler:    _MinidogService_GetSampleData_Handler,
+			MethodName: "SendLog",
+			Handler:    _LogCollector_SendLog_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

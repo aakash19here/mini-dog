@@ -9,6 +9,7 @@ package minidogpb
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -21,27 +22,83 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type SampleRequest struct {
+type LogLevel int32
+
+const (
+	LogLevel_INFO  LogLevel = 0
+	LogLevel_WARN  LogLevel = 1
+	LogLevel_ERROR LogLevel = 2
+	LogLevel_DEBUG LogLevel = 3
+)
+
+// Enum value maps for LogLevel.
+var (
+	LogLevel_name = map[int32]string{
+		0: "INFO",
+		1: "WARN",
+		2: "ERROR",
+		3: "DEBUG",
+	}
+	LogLevel_value = map[string]int32{
+		"INFO":  0,
+		"WARN":  1,
+		"ERROR": 2,
+		"DEBUG": 3,
+	}
+)
+
+func (x LogLevel) Enum() *LogLevel {
+	p := new(LogLevel)
+	*p = x
+	return p
+}
+
+func (x LogLevel) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (LogLevel) Descriptor() protoreflect.EnumDescriptor {
+	return file_minidog_proto_enumTypes[0].Descriptor()
+}
+
+func (LogLevel) Type() protoreflect.EnumType {
+	return &file_minidog_proto_enumTypes[0]
+}
+
+func (x LogLevel) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use LogLevel.Descriptor instead.
+func (LogLevel) EnumDescriptor() ([]byte, []int) {
+	return file_minidog_proto_rawDescGZIP(), []int{0}
+}
+
+type LogEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	AgentId       string                 `protobuf:"bytes,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
+	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Level         LogLevel               `protobuf:"varint,4,opt,name=level,proto3,enum=minidog.LogLevel" json:"level,omitempty"`
+	Msg           string                 `protobuf:"bytes,5,opt,name=msg,proto3" json:"msg,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SampleRequest) Reset() {
-	*x = SampleRequest{}
+func (x *LogEntryRequest) Reset() {
+	*x = LogEntryRequest{}
 	mi := &file_minidog_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SampleRequest) String() string {
+func (x *LogEntryRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SampleRequest) ProtoMessage() {}
+func (*LogEntryRequest) ProtoMessage() {}
 
-func (x *SampleRequest) ProtoReflect() protoreflect.Message {
+func (x *LogEntryRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_minidog_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -53,39 +110,67 @@ func (x *SampleRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SampleRequest.ProtoReflect.Descriptor instead.
-func (*SampleRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use LogEntryRequest.ProtoReflect.Descriptor instead.
+func (*LogEntryRequest) Descriptor() ([]byte, []int) {
 	return file_minidog_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *SampleRequest) GetId() string {
+func (x *LogEntryRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-type SameResponse struct {
+func (x *LogEntryRequest) GetAgentId() string {
+	if x != nil {
+		return x.AgentId
+	}
+	return ""
+}
+
+func (x *LogEntryRequest) GetTimestamp() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Timestamp
+	}
+	return nil
+}
+
+func (x *LogEntryRequest) GetLevel() LogLevel {
+	if x != nil {
+		return x.Level
+	}
+	return LogLevel_INFO
+}
+
+func (x *LogEntryRequest) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+type LogEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Log           string                 `protobuf:"bytes,1,opt,name=log,proto3" json:"log,omitempty"`
+	Ok            bool                   `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SameResponse) Reset() {
-	*x = SameResponse{}
+func (x *LogEntryResponse) Reset() {
+	*x = LogEntryResponse{}
 	mi := &file_minidog_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SameResponse) String() string {
+func (x *LogEntryResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SameResponse) ProtoMessage() {}
+func (*LogEntryResponse) ProtoMessage() {}
 
-func (x *SameResponse) ProtoReflect() protoreflect.Message {
+func (x *LogEntryResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_minidog_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -97,29 +182,38 @@ func (x *SameResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SameResponse.ProtoReflect.Descriptor instead.
-func (*SameResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use LogEntryResponse.ProtoReflect.Descriptor instead.
+func (*LogEntryResponse) Descriptor() ([]byte, []int) {
 	return file_minidog_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *SameResponse) GetLog() string {
+func (x *LogEntryResponse) GetOk() bool {
 	if x != nil {
-		return x.Log
+		return x.Ok
 	}
-	return ""
+	return false
 }
 
 var File_minidog_proto protoreflect.FileDescriptor
 
 const file_minidog_proto_rawDesc = "" +
 	"\n" +
-	"\rminidog.proto\x12\aminidog\"\x1f\n" +
-	"\rSampleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\" \n" +
-	"\fSameResponse\x12\x10\n" +
-	"\x03log\x18\x01 \x01(\tR\x03log2P\n" +
-	"\x0eMinidogService\x12>\n" +
-	"\rGetSampleData\x12\x16.minidog.SampleRequest\x1a\x15.minidog.SameResponseB\x15Z\x13generated/minidogpbb\x06proto3"
+	"\rminidog.proto\x12\aminidog\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb1\x01\n" +
+	"\x0fLogEntryRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
+	"\bagent_id\x18\x02 \x01(\tR\aagentId\x128\n" +
+	"\ttimestamp\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12'\n" +
+	"\x05level\x18\x04 \x01(\x0e2\x11.minidog.LogLevelR\x05level\x12\x10\n" +
+	"\x03msg\x18\x05 \x01(\tR\x03msg\"\"\n" +
+	"\x10LogEntryResponse\x12\x0e\n" +
+	"\x02ok\x18\x01 \x01(\bR\x02ok*4\n" +
+	"\bLogLevel\x12\b\n" +
+	"\x04INFO\x10\x00\x12\b\n" +
+	"\x04WARN\x10\x01\x12\t\n" +
+	"\x05ERROR\x10\x02\x12\t\n" +
+	"\x05DEBUG\x10\x032N\n" +
+	"\fLogCollector\x12>\n" +
+	"\aSendLog\x12\x18.minidog.LogEntryRequest\x1a\x19.minidog.LogEntryResponseB\x15Z\x13generated/minidogpbb\x06proto3"
 
 var (
 	file_minidog_proto_rawDescOnce sync.Once
@@ -133,19 +227,24 @@ func file_minidog_proto_rawDescGZIP() []byte {
 	return file_minidog_proto_rawDescData
 }
 
+var file_minidog_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_minidog_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_minidog_proto_goTypes = []any{
-	(*SampleRequest)(nil), // 0: minidog.SampleRequest
-	(*SameResponse)(nil),  // 1: minidog.SameResponse
+	(LogLevel)(0),                 // 0: minidog.LogLevel
+	(*LogEntryRequest)(nil),       // 1: minidog.LogEntryRequest
+	(*LogEntryResponse)(nil),      // 2: minidog.LogEntryResponse
+	(*timestamppb.Timestamp)(nil), // 3: google.protobuf.Timestamp
 }
 var file_minidog_proto_depIdxs = []int32{
-	0, // 0: minidog.MinidogService.GetSampleData:input_type -> minidog.SampleRequest
-	1, // 1: minidog.MinidogService.GetSampleData:output_type -> minidog.SameResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: minidog.LogEntryRequest.timestamp:type_name -> google.protobuf.Timestamp
+	0, // 1: minidog.LogEntryRequest.level:type_name -> minidog.LogLevel
+	1, // 2: minidog.LogCollector.SendLog:input_type -> minidog.LogEntryRequest
+	2, // 3: minidog.LogCollector.SendLog:output_type -> minidog.LogEntryResponse
+	3, // [3:4] is the sub-list for method output_type
+	2, // [2:3] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_minidog_proto_init() }
@@ -158,13 +257,14 @@ func file_minidog_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_minidog_proto_rawDesc), len(file_minidog_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_minidog_proto_goTypes,
 		DependencyIndexes: file_minidog_proto_depIdxs,
+		EnumInfos:         file_minidog_proto_enumTypes,
 		MessageInfos:      file_minidog_proto_msgTypes,
 	}.Build()
 	File_minidog_proto = out.File

@@ -4,15 +4,28 @@ package minidog;
 
 option go_package = "generated/minidogpb";
 
-service MinidogService {
-    // unary
-    rpc GetSampleData (SampleRequest) returns (SameResponse);
+import "google/protobuf/timestamp.proto";
+
+enum LogLevel {
+  INFO = 0;
+  WARN = 1;
+  ERROR = 2;
+  DEBUG = 3;
 }
 
-message SampleRequest {
+message LogEntryRequest {
     string id = 1;
+    string agent_id = 2;
+    google.protobuf.Timestamp timestamp = 3;
+    LogLevel level = 4;
+    string msg = 5;
 }
 
-message SameResponse {
-    string log = 1;
+message LogEntryResponse {
+    bool ok = 1;
+}
+
+service LogCollector {
+    // unary
+    rpc SendLog(LogEntryRequest) returns (LogEntryResponse);
 }

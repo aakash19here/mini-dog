@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package minidog;
+
+option go_package = "generated/minidogpb";
+
+service MinidogService {
+    // unary
+    rpc GetSampleData (SampleRequest) returns (SameResponse);
+}
+
+message SampleRequest {
+    string id = 1;
+}
+
+message SameResponse {
+    string log = 1;
+}

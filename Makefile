@@ -6,4 +6,10 @@ proto:
 		proto/*.proto
 	@echo "Proto files generated in the 'proto' directory."
 
-.PHONY: proto
+server:
+	go run collector/main.go
+	
+unary:
+	go run agent/main.go unary
+
+.PHONY: proto server unary

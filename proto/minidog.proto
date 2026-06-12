@@ -36,4 +36,7 @@ service LogCollector {
 
   // client
   rpc SubmitLogs(stream LogEntryRequest) returns (LogSummary);
+
+  //bidi
+  rpc StreamLogs(stream LogEntryRequest) returns (stream LogEntryResponse);
 }

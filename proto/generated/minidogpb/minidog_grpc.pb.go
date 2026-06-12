@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	LogCollector_SendLog_FullMethodName    = "/minidog.LogCollector/SendLog"
 	LogCollector_SubmitLogs_FullMethodName = "/minidog.LogCollector/SubmitLogs"
+	LogCollector_StreamLogs_FullMethodName = "/minidog.LogCollector/StreamLogs"
 )
 
 // LogCollectorClient is the client API for LogCollector service.
@@ -31,6 +32,8 @@ type LogCollectorClient interface {
 	SendLog(ctx context.Context, in *LogEntryRequest, opts ...grpc.CallOption) (*LogEntryResponse, error)
 	// client
 	SubmitLogs(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[LogEntryRequest, LogSummary], error)
+	// bidi
+	StreamLogs(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[LogEntryRequest, LogEntryResponse], error)
 }
 
 type logCollectorClient struct {
@@ -64,6 +67,19 @@ func (c *logCollectorClient) SubmitLogs(ctx context.Context, opts ...grpc.CallOp
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type LogCollector_SubmitLogsClient = grpc.ClientStreamingClient[LogEntryRequest, LogSummary]
 
+func (c *logCollectorClient) StreamLogs(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[LogEntryRequest, LogEntryResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &LogCollector_ServiceDesc.Streams[1], LogCollector_StreamLogs_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[LogEntryRequest, LogEntryResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type LogCollector_StreamLogsClient = grpc.BidiStreamingClient[LogEntryRequest, LogEntryResponse]
+
 // LogCollectorServer is the server API for LogCollector service.
 // All implementations must embed UnimplementedLogCollectorServer
 // for forward compatibility.
@@ -72,6 +88,8 @@ type LogCollectorServer interface {
 	SendLog(context.Context, *LogEntryRequest) (*LogEntryResponse, error)
 	// client
 	SubmitLogs(grpc.ClientStreamingServer[LogEntryRequest, LogSummary]) error
+	// bidi
+	StreamLogs(grpc.BidiStreamingServer[LogEntryRequest, LogEntryResponse]) error
 	mustEmbedUnimplementedLogCollectorServer()
 }
 
@@ -87,6 +105,9 @@ func (UnimplementedLogCollectorServer) SendLog(context.Context, *LogEntryRequest
 }
 func (UnimplementedLogCollectorServer) SubmitLogs(grpc.ClientStreamingServer[LogEntryRequest, LogSummary]) error {
 	return status.Error(codes.Unimplemented, "method SubmitLogs not implemented")
+}
+func (UnimplementedLogCollectorServer) StreamLogs(grpc.BidiStreamingServer[LogEntryRequest, LogEntryResponse]) error {
+	return status.Error(codes.Unimplemented, "method StreamLogs not implemented")
 }
 func (UnimplementedLogCollectorServer) mustEmbedUnimplementedLogCollectorServer() {}
 func (UnimplementedLogCollectorServer) testEmbeddedByValue()                      {}
@@ -134,6 +155,13 @@ func _LogCollector_SubmitLogs_Handler(srv interface{}, stream grpc.ServerStream)
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type LogCollector_SubmitLogsServer = grpc.ClientStreamingServer[LogEntryRequest, LogSummary]
 
+func _LogCollector_StreamLogs_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(LogCollectorServer).StreamLogs(&grpc.GenericServerStream[LogEntryRequest, LogEntryResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type LogCollector_StreamLogsServer = grpc.BidiStreamingServer[LogEntryRequest, LogEntryResponse]
+
 // LogCollector_ServiceDesc is the grpc.ServiceDesc for LogCollector service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -150,6 +178,12 @@ var LogCollector_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "SubmitLogs",
 			Handler:       _LogCollector_SubmitLogs_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "StreamLogs",
+			Handler:       _LogCollector_StreamLogs_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 	},

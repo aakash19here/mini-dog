@@ -37,5 +37,7 @@ func main() {
 		clients.Unary(client)
 	case "client":
 		clients.Client_Streaming(client)
+	case "bidi":
+		clients.BidiStreaming(client)
 	}
 }

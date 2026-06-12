@@ -267,11 +267,13 @@ const file_minidog_proto_rawDesc = "" +
 	"\x04INFO\x10\x00\x12\b\n" +
 	"\x04WARN\x10\x01\x12\t\n" +
 	"\x05ERROR\x10\x02\x12\t\n" +
-	"\x05DEBUG\x10\x032\x8d\x01\n" +
+	"\x05DEBUG\x10\x032\xd4\x01\n" +
 	"\fLogCollector\x12>\n" +
 	"\aSendLog\x12\x18.minidog.LogEntryRequest\x1a\x19.minidog.LogEntryResponse\x12=\n" +
 	"\n" +
-	"SubmitLogs\x12\x18.minidog.LogEntryRequest\x1a\x13.minidog.LogSummary(\x01B\x15Z\x13generated/minidogpbb\x06proto3"
+	"SubmitLogs\x12\x18.minidog.LogEntryRequest\x1a\x13.minidog.LogSummary(\x01\x12E\n" +
+	"\n" +
+	"StreamLogs\x12\x18.minidog.LogEntryRequest\x1a\x19.minidog.LogEntryResponse(\x010\x01B\x15Z\x13generated/minidogpbb\x06proto3"
 
 var (
 	file_minidog_proto_rawDescOnce sync.Once
@@ -299,10 +301,12 @@ var file_minidog_proto_depIdxs = []int32{
 	0, // 1: minidog.LogEntryRequest.level:type_name -> minidog.LogLevel
 	1, // 2: minidog.LogCollector.SendLog:input_type -> minidog.LogEntryRequest
 	1, // 3: minidog.LogCollector.SubmitLogs:input_type -> minidog.LogEntryRequest
-	2, // 4: minidog.LogCollector.SendLog:output_type -> minidog.LogEntryResponse
-	3, // 5: minidog.LogCollector.SubmitLogs:output_type -> minidog.LogSummary
-	4, // [4:6] is the sub-list for method output_type
-	2, // [2:4] is the sub-list for method input_type
+	1, // 4: minidog.LogCollector.StreamLogs:input_type -> minidog.LogEntryRequest
+	2, // 5: minidog.LogCollector.SendLog:output_type -> minidog.LogEntryResponse
+	3, // 6: minidog.LogCollector.SubmitLogs:output_type -> minidog.LogSummary
+	2, // 7: minidog.LogCollector.StreamLogs:output_type -> minidog.LogEntryResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name

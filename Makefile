@@ -13,6 +13,9 @@ unary:
 	go run agent/main.go unary
 
 client:
-	go run agent/main.go client
+	go run agent/main.go client\
+
+bidi:
+	go run agent/main.go bidi
 
 .PHONY: proto server unary client

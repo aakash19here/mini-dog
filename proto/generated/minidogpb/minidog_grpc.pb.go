@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	LogCollector_SendLog_FullMethodName = "/minidog.LogCollector/SendLog"
+	LogCollector_SendLog_FullMethodName    = "/minidog.LogCollector/SendLog"
+	LogCollector_SubmitLogs_FullMethodName = "/minidog.LogCollector/SubmitLogs"
 )
 
 // LogCollectorClient is the client API for LogCollector service.
@@ -28,6 +29,8 @@ const (
 type LogCollectorClient interface {
 	// unary
 	SendLog(ctx context.Context, in *LogEntryRequest, opts ...grpc.CallOption) (*LogEntryResponse, error)
+	// client
+	SubmitLogs(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[LogEntryRequest, LogSummary], error)
 }
 
 type logCollectorClient struct {
@@ -48,12 +51,27 @@ func (c *logCollectorClient) SendLog(ctx context.Context, in *LogEntryRequest, o
 	return out, nil
 }
 
+func (c *logCollectorClient) SubmitLogs(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[LogEntryRequest, LogSummary], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &LogCollector_ServiceDesc.Streams[0], LogCollector_SubmitLogs_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[LogEntryRequest, LogSummary]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type LogCollector_SubmitLogsClient = grpc.ClientStreamingClient[LogEntryRequest, LogSummary]
+
 // LogCollectorServer is the server API for LogCollector service.
 // All implementations must embed UnimplementedLogCollectorServer
 // for forward compatibility.
 type LogCollectorServer interface {
 	// unary
 	SendLog(context.Context, *LogEntryRequest) (*LogEntryResponse, error)
+	// client
+	SubmitLogs(grpc.ClientStreamingServer[LogEntryRequest, LogSummary]) error
 	mustEmbedUnimplementedLogCollectorServer()
 }
 
@@ -66,6 +84,9 @@ type UnimplementedLogCollectorServer struct{}
 
 func (UnimplementedLogCollectorServer) SendLog(context.Context, *LogEntryRequest) (*LogEntryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendLog not implemented")
+}
+func (UnimplementedLogCollectorServer) SubmitLogs(grpc.ClientStreamingServer[LogEntryRequest, LogSummary]) error {
+	return status.Error(codes.Unimplemented, "method SubmitLogs not implemented")
 }
 func (UnimplementedLogCollectorServer) mustEmbedUnimplementedLogCollectorServer() {}
 func (UnimplementedLogCollectorServer) testEmbeddedByValue()                      {}
@@ -106,6 +127,13 @@ func _LogCollector_SendLog_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LogCollector_SubmitLogs_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(LogCollectorServer).SubmitLogs(&grpc.GenericServerStream[LogEntryRequest, LogSummary]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type LogCollector_SubmitLogsServer = grpc.ClientStreamingServer[LogEntryRequest, LogSummary]
+
 // LogCollector_ServiceDesc is the grpc.ServiceDesc for LogCollector service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -118,6 +146,12 @@ var LogCollector_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _LogCollector_SendLog_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "SubmitLogs",
+			Handler:       _LogCollector_SubmitLogs_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "minidog.proto",
 }

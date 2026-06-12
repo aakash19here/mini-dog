@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package minidog;
 
-option go_package = "generated/minidogpb";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "generated/minidogpb";
 
 enum LogLevel {
   INFO = 0;
@@ -14,18 +14,26 @@ enum LogLevel {
 }
 
 message LogEntryRequest {
-    string id = 1;
-    string agent_id = 2;
-    google.protobuf.Timestamp timestamp = 3;
-    LogLevel level = 4;
-    string msg = 5;
+  string id = 1;
+  string agent_id = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  LogLevel level = 4;
+  string msg = 5;
 }
 
 message LogEntryResponse {
-    bool ok = 1;
+  bool ok = 1;
+}
+
+message LogSummary {
+  int32 total_records_processed = 1;
+  bool is_successful = 2;
 }
 
 service LogCollector {
-    // unary
-    rpc SendLog(LogEntryRequest) returns (LogEntryResponse);
+  // unary
+  rpc SendLog(LogEntryRequest) returns (LogEntryResponse);
+
+  // client
+  rpc SubmitLogs(stream LogEntryRequest) returns (LogSummary);
 }

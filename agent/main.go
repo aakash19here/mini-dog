@@ -35,5 +35,7 @@ func main() {
 	switch os.Args[1] {
 	case "unary":
 		clients.Unary(client)
+	case "client":
+		clients.Client_Streaming(client)
 	}
 }

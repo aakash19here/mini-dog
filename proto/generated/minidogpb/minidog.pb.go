@@ -194,6 +194,58 @@ func (x *LogEntryResponse) GetOk() bool {
 	return false
 }
 
+type LogSummary struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	TotalRecordsProcessed int32                  `protobuf:"varint,1,opt,name=total_records_processed,json=totalRecordsProcessed,proto3" json:"total_records_processed,omitempty"`
+	IsSuccessful          bool                   `protobuf:"varint,2,opt,name=is_successful,json=isSuccessful,proto3" json:"is_successful,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *LogSummary) Reset() {
+	*x = LogSummary{}
+	mi := &file_minidog_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LogSummary) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LogSummary) ProtoMessage() {}
+
+func (x *LogSummary) ProtoReflect() protoreflect.Message {
+	mi := &file_minidog_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LogSummary.ProtoReflect.Descriptor instead.
+func (*LogSummary) Descriptor() ([]byte, []int) {
+	return file_minidog_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *LogSummary) GetTotalRecordsProcessed() int32 {
+	if x != nil {
+		return x.TotalRecordsProcessed
+	}
+	return 0
+}
+
+func (x *LogSummary) GetIsSuccessful() bool {
+	if x != nil {
+		return x.IsSuccessful
+	}
+	return false
+}
+
 var File_minidog_proto protoreflect.FileDescriptor
 
 const file_minidog_proto_rawDesc = "" +
@@ -206,14 +258,20 @@ const file_minidog_proto_rawDesc = "" +
 	"\x05level\x18\x04 \x01(\x0e2\x11.minidog.LogLevelR\x05level\x12\x10\n" +
 	"\x03msg\x18\x05 \x01(\tR\x03msg\"\"\n" +
 	"\x10LogEntryResponse\x12\x0e\n" +
-	"\x02ok\x18\x01 \x01(\bR\x02ok*4\n" +
+	"\x02ok\x18\x01 \x01(\bR\x02ok\"i\n" +
+	"\n" +
+	"LogSummary\x126\n" +
+	"\x17total_records_processed\x18\x01 \x01(\x05R\x15totalRecordsProcessed\x12#\n" +
+	"\ris_successful\x18\x02 \x01(\bR\fisSuccessful*4\n" +
 	"\bLogLevel\x12\b\n" +
 	"\x04INFO\x10\x00\x12\b\n" +
 	"\x04WARN\x10\x01\x12\t\n" +
 	"\x05ERROR\x10\x02\x12\t\n" +
-	"\x05DEBUG\x10\x032N\n" +
+	"\x05DEBUG\x10\x032\x8d\x01\n" +
 	"\fLogCollector\x12>\n" +
-	"\aSendLog\x12\x18.minidog.LogEntryRequest\x1a\x19.minidog.LogEntryResponseB\x15Z\x13generated/minidogpbb\x06proto3"
+	"\aSendLog\x12\x18.minidog.LogEntryRequest\x1a\x19.minidog.LogEntryResponse\x12=\n" +
+	"\n" +
+	"SubmitLogs\x12\x18.minidog.LogEntryRequest\x1a\x13.minidog.LogSummary(\x01B\x15Z\x13generated/minidogpbb\x06proto3"
 
 var (
 	file_minidog_proto_rawDescOnce sync.Once
@@ -228,20 +286,23 @@ func file_minidog_proto_rawDescGZIP() []byte {
 }
 
 var file_minidog_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_minidog_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_minidog_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_minidog_proto_goTypes = []any{
 	(LogLevel)(0),                 // 0: minidog.LogLevel
 	(*LogEntryRequest)(nil),       // 1: minidog.LogEntryRequest
 	(*LogEntryResponse)(nil),      // 2: minidog.LogEntryResponse
-	(*timestamppb.Timestamp)(nil), // 3: google.protobuf.Timestamp
+	(*LogSummary)(nil),            // 3: minidog.LogSummary
+	(*timestamppb.Timestamp)(nil), // 4: google.protobuf.Timestamp
 }
 var file_minidog_proto_depIdxs = []int32{
-	3, // 0: minidog.LogEntryRequest.timestamp:type_name -> google.protobuf.Timestamp
+	4, // 0: minidog.LogEntryRequest.timestamp:type_name -> google.protobuf.Timestamp
 	0, // 1: minidog.LogEntryRequest.level:type_name -> minidog.LogLevel
 	1, // 2: minidog.LogCollector.SendLog:input_type -> minidog.LogEntryRequest
-	2, // 3: minidog.LogCollector.SendLog:output_type -> minidog.LogEntryResponse
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
+	1, // 3: minidog.LogCollector.SubmitLogs:input_type -> minidog.LogEntryRequest
+	2, // 4: minidog.LogCollector.SendLog:output_type -> minidog.LogEntryResponse
+	3, // 5: minidog.LogCollector.SubmitLogs:output_type -> minidog.LogSummary
+	4, // [4:6] is the sub-list for method output_type
+	2, // [2:4] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
@@ -258,7 +319,7 @@ func file_minidog_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_minidog_proto_rawDesc), len(file_minidog_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

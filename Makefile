@@ -12,4 +12,7 @@ server:
 unary:
 	go run agent/main.go unary
 
-.PHONY: proto server unary
+client:
+	go run agent/main.go client
+
+.PHONY: proto server unary client

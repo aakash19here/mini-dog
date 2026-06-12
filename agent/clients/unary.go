@@ -21,15 +21,12 @@ func Unary(client minidogpb.LogCollectorClient) {
 
 	defer cancel()
 
-	resp, err := client.SendLog(ctx, log)
+	_, err := client.SendLog(ctx, log)
 
 	if err != nil {
 		slog.Error("could not send logs to the server", "error", err)
 	}
 
-	if resp.Ok {
-		slog.Info("Log ingested")
-	} else {
-		slog.Info("Something went wrong ingesting log")
-	}
+	slog.Info("Log ingested")
+
 }
